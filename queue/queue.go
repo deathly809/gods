@@ -1,30 +1,56 @@
-
 package queue
+
+type queueNode struct {
+	prev, next *queueNode
+	data       interface{}
+}
 
 // Queue gives required methods for a queue data-structure
 type Queue interface {
 	Enqueue(interface{})
 	Dequeue() interface{}
 	Count() int
-} 
+}
 
-type queue []interface{}
+type queue struct {
+	head, tail *queueNode
+	count      int
+}
+
+//type queue []interface{}
 
 func (q *queue) Enqueue(val interface{}) {
-	*q = append(*q,val)
+	if q.count == 0 {
+		newNode := &queueNode{}
+		newNode.data = val
+		q.head, q.tail = newNode, newNode
+	} else {
+		newNode := &queueNode{prev: q.tail, data: val}
+		q.tail.next = newNode
+		q.tail = newNode
+	}
+	q.count++
 }
 
 func (q *queue) Dequeue() interface{} {
-	if len(*q) > 0{
-		v := (*q)[0]
-		*q = (*q)[1:]
-		return v
+	result := interface{}(nil)
+	if q.head != nil {
+
+		result = q.head.data
+		q.head = q.head.next
+
+		if q.head == nil {
+			q.tail = nil
+		} else {
+			q.head.prev = nil
+		}
+		q.count--
 	}
-	return nil
+	return result
 }
 
 func (q *queue) Count() int {
-	return len(*q)
+	return q.count
 }
 
 // New constructs a new queue
