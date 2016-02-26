@@ -8,6 +8,7 @@ type queueNode struct {
 // Queue gives required methods for a queue data-structure
 type Queue interface {
 	Enqueue(interface{})
+	Peek() interface{}
 	Dequeue() interface{}
 	Count() int
 }
@@ -45,6 +46,14 @@ func (q *queue) Dequeue() interface{} {
 			q.head.prev = nil
 		}
 		q.count--
+	}
+	return result
+}
+
+func (q *queue) Peek() interface{} {
+	result := interface{}(nil)
+	if q.head != nil {
+		result = q.head.data
 	}
 	return result
 }
