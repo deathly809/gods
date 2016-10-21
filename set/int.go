@@ -6,8 +6,8 @@ type OrderedIntSet struct {
 	posFirst, posSecond   int
 }
 
-func NewOrderedIntSet(a, b []int) OrderedIntSet {
-	return OrderedIntSet{first: a, second: b}
+func NewOrderedIntSet(a, b []int) *OrderedIntSet {
+	return &OrderedIntSet{first: a, second: b}
 }
 
 func (m *OrderedIntSet) GetResult() []int {
