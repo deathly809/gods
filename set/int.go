@@ -10,6 +10,12 @@ func NewOrderedIntSet(a, b []int) OrderedIntSet {
 	return OrderedIntSet{first: a, second: b}
 }
 
+func (m *OrderedIntSet) GetResult() []int {
+	result := make([]int, len(m.result))
+	copy(result, m.result)
+	return result
+}
+
 // Less returns the relationship first[0] < second[0] if first is true,
 // otherwise return the relationship second[0] < first[0]
 func (m *OrderedIntSet) Less(sel MergeSelector) bool {

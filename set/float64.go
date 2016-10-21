@@ -6,8 +6,14 @@ type OrderedFloat64Set struct {
 	posFirst, posSecond   int
 }
 
-func NewOrderedFloat64Set(a, b []float64) OrderedFloat64Set {
-	return OrderedFloat64Set{first: a, second: b}
+func NewOrderedFloat64Set(a, b []float64) *OrderedFloat64Set {
+	return &OrderedFloat64Set{first: a, second: b}
+}
+
+func (m *OrderedFloat64Set) GetResult() []float64 {
+	result := make([]float64, len(m.result))
+	copy(result, m.result)
+	return result
 }
 
 // Less returns the relationship first[0] < second[0] if first is true,
