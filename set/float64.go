@@ -6,6 +6,10 @@ type OrderedFloat64Set struct {
 	posFirst, posSecond   int
 }
 
+func NewOrderedFloat64Set(a, b []float64) OrderedFloat64Set {
+	return OrderedFloat64Set{first: a, second: b}
+}
+
 // Less returns the relationship first[0] < second[0] if first is true,
 // otherwise return the relationship second[0] < first[0]
 func (m *OrderedFloat64Set) Less(sel MergeSelector) bool {
