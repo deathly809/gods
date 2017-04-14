@@ -1,93 +1,56 @@
 package graph
 
-type edgeSlice []Edge
-
-func (e edgeSlice) Swap(i, j int) {
-	tmp := e[i]
-	e[i] = e[j]
-	e[j] = tmp
-}
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type vertex struct {
-	g          *graph
-	id, height int
-	excess     float32
-	edges      edgeSlice
-	mappings   map[int]wrapper
+	id   int
+	data Marshable
 }
 
 func (v *vertex) ID() int {
 	return v.id
 }
 
-func (v *vertex) Height() int {
-	return v.height
+func (v *vertex) Get() Marshable {
+	return v.data
 }
 
-func (v *vertex) SetHeight(height int) {
-	v.height = height
+func (v *vertex) Set(data Marshable) {
+	v.data = data
 }
 
-func (v *vertex) Excess() float32 {
-	return v.excess
+type vWrapper struct {
+	ID   int
+	Data Marshable
 }
 
-func (v *vertex) SetExcess(excess float32) {
-	v.excess = excess
-}
-
-func (v *vertex) NumEdges() int {
-	return len(v.edges)
-}
-
-func (v *vertex) Edges() []Edge {
-	return v.edges
-}
-
-func (v *vertex) Edge(to int) Edge {
-	wrp, present := v.mappings[to]
-	if present {
-		return wrp.value.(*edge)
+func (v *vertex) MarshalJSON() ([]byte, error) {
+	wrapper := vWrapper{
+		v.id,
+		v.data,
 	}
-	return nil
+	return json.Marshal(wrapper)
 }
 
-func (v *vertex) connect(to int, flow, capacity float32) bool {
-	e := v.Edge(to)
-	if e != nil {
-		return false
+func (v *vertex) UnmarshalJSON(data []byte) error {
+	wrapper := vWrapper{}
+
+	err := json.Unmarshal(data, &wrapper)
+	if err == nil {
+		v.id = wrapper.ID
+		v.data = wrapper.Data
+	} else {
+		fmt.Println(err)
 	}
-
-	t := v.g.GetVertex(to)
-	if t == nil {
-		return false
-	}
-
-	e = &edge{
-		from:     v,
-		to:       t.(*vertex),
-		flow:     flow,
-		capacity: capacity,
-	}
-
-	v.g.edges = nil
-	v.edges = append(v.edges, e)
-
-	v.mappings[to] = wrapper{e, len(v.edges) - 1}
-
-	return true
+	return err
 }
 
-func (v *vertex) removeEdge(to int) {
-	wrapper, present := v.mappings[to]
-	if present {
-		v.edges.Swap(wrapper.idx, len(v.edges)-1)
-		v.edges = v.edges[:len(v.edges)-1]
-		delete(v.mappings, to)
+func newVertex(id int, data Marshable) *vertex {
+	return &vertex{
+		id:   id,
+		data: data,
 	}
-}
-
-func (v *vertex) IsNeighbor(to int) bool {
-	_, present := v.mappings[to]
-	return present
 }

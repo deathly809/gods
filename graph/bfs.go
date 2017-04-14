@@ -1,6 +1,6 @@
 package graph
 
-import "jeff/ds/queue"
+import "github.com/deathly809/gods/queue"
 
 type vResult struct {
 	v     Vertex
@@ -22,7 +22,7 @@ func bfs(v Vertex, g Graph, res SearchResult, tick int) int {
 		s := Q.Dequeue().(*vResult)
 		s.end = tick
 		tick++
-		for _, e := range s.v.Edges() {
+		for e := range g.Neighbors(s.v) {
 			v = e.To()
 			_, e := res[v]
 			if !e {
@@ -42,7 +42,7 @@ func BFS(g Graph) SearchResult {
 
 	result := SearchResult(make(map[Vertex]*vResult))
 
-	for _, v := range g.Vertices() {
+	for v := range g.Vertices() {
 		if _, exists := result[v]; !exists {
 			tick = bfs(v, g, result, tick)
 		}
